@@ -1159,16 +1159,6 @@ footer em { color: var(--blue-mid); font-style: italic; }
         <input type="text" id="actaCedula" list="dl_cedula" placeholder="N° DE CEDULA..." inputmode="numeric" maxlength="10" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)" onblur="if(this.value.length>0&&this.value.length<6){this.style.borderColor='#e53935';this.title='Mínimo 6 dígitos';}else{this.style.borderColor='';this.title='';}" />
         <datalist id="dl_cedula"></datalist>
       </div>
-      <div class="acta-field">
-        <label>Bodega Layher</label>
-        <select id="actaCargo" style="width:100%;height:42px;border:1.5px solid var(--border);border-radius:7px;padding:0 .9rem;font-size:.81rem;font-family:inherit;color:var(--text);background:var(--off-white);outline:none;transition:all .2s;cursor:pointer;appearance:auto;">
-          <option value="">-- SELECCIONAR BODEGA --</option>
-          <option value="FUNZA">FUNZA</option>
-          <option value="BARRANQUILLA">BARRANQUILLA</option>
-          <option value="MEDELLIN">MEDELLÍN</option>
-          <option value="CALI">CALI</option>
-        </select>
-      </div>
     </div>
   </div>
 
@@ -1886,7 +1876,6 @@ function validarCamposObligatorios() {
     { id: 'actaNombre',  label: 'Nombre del responsable' },
     { id: 'actaCedula',  label: 'Cédula del responsable' },
     { id: 'actaCliente', label: 'Cliente' },
-    { id: 'actaCargo',   label: 'Bodega Layher' },
   ];
   const vacios = [];
   campos.forEach(c => {
@@ -2002,7 +1991,6 @@ document.getElementById('btnCSV').addEventListener('click', () => {
   const hora    = new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   const nombre  = document.getElementById('actaNombre').value.trim() || '—';
   const cedula  = document.getElementById('actaCedula').value.trim() || '—';
-  const bodega  = document.getElementById('actaCargo').value.trim()  || '—';
   const totP    = listado.reduce((s,r)=>s+(r.peso*r.qty),0);
   const totU    = listado.reduce((s,r)=>s+r.qty,0);
 
@@ -2083,7 +2071,6 @@ document.getElementById('btnCSV').addEventListener('click', () => {
   rows.push([]);
   const s3=[]; s3[0]=L('CEDULA:'); s3[1]=D(cedula); s3[3]=L('CEDULA:'); rows.push(s3);
   rows.push([]);
-  const s4=[]; s4[0]=L('BODEGA LAYHER:'); s4[1]=D(bodega); rows.push(s4);
 
   // Ancho dinámico para descripción; observaciones fijo en 20 con wrap
   // En Excel (Calibri 11), 1 unidad de ancho ≈ 1 carácter + margen de padding interno
@@ -2399,8 +2386,7 @@ document.getElementById('btnPDF').addEventListener('click', () => {
   const fecha   = document.getElementById('actaFecha').value ? new Date(document.getElementById('actaFecha').value + 'T12:00:00').toLocaleDateString('es-CO',{day:'2-digit',month:'2-digit',year:'numeric'}) : new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'2-digit',year:'numeric'});
   const nombre  = document.getElementById('actaNombre').value.trim() || '—';
   const cedula  = document.getElementById('actaCedula').value.trim() || '—';
-  const cargo   = document.getElementById('actaCargo').value.trim()  || '—';
-  const actaNum = generarNumeroActa(document.getElementById('actaCargo').value.trim());
+  const actaNum = generarNumeroActa('');
   const totU = listado.reduce((s,r)=>s+r.qty,0);
   const totP = listado.reduce((s,r)=>s+(r.peso*r.qty),0);
   const now = new Date();
@@ -2564,7 +2550,6 @@ document.getElementById('btnPDF').addEventListener('click', () => {
               <td width="50%" style="vertical-align:bottom">
                 <div style="font-size:10px;font-weight:700;color:#0D1B2E">${nombre}</div>
                 <div style="font-size:9px;color:#546E7A;margin-top:2px">CC: ${cedula}</div>
-                <div style="font-size:9px;color:#546E7A">${cargo}</div>
                 <div style="font-size:9px;font-weight:700;color:#003087;margin-top:4px;text-transform:uppercase;letter-spacing:.5px">Responsable del conteo</div>
               </td>
               <td width="50%" style="padding:0;vertical-align:bottom;text-align:right">
